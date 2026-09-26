@@ -1,0 +1,35 @@
+schema_version: radio_metrics_validation_protocol_v1
+status: prospective_engineering_acceptance
+source_baseline: 1ba32933882621990b2b933cf98762b6b6cf71c8
+scope: finite owned private IPC brokers; no live radio stack or cost benchmark
+frozen_before_l2: true
+contract: docs/radio_broker_study/METRICS_CONTRACT.md
+exact_fixtures: config/radio_broker/metrics_validation_fixture.json
+exact_fixtures_sha256: 4ada33034084086b36a7642efba1f33c61a5ba60cfab9bd32305cec89e7a7a56
+master_seed: 41
+every_messages: 4
+l2:
+  backends: [c, grc]
+  cases_per_backend: 8
+  total_process_cases: 16
+  cases: [identity-ragged, fixed-ragged-on, fixed-ragged-off, fixed-paced, empty-only, exact-full-window, final-partial-window, upstream-delay-stall-stop]
+  warmup_samples: {DL: 11, UL: 19}
+  post_warmup_samples_per_direction_max: 65537
+  case_wall_timeout_seconds: 20
+  io_timeout_seconds: 4
+  stop_timeout_seconds: 5
+  raw_capture_bytes_per_direction_max: 2097152
+  resource_observations_max: 64
+  intentional_delays_ms: [20, 40]
+  instrumentation_pair: [fixed-ragged-on, fixed-ragged-off]
+  instrumentation_pair_acceptance: exact output bytes and terminal DSP state for identical inputs/partition/seed; descriptive costs only
+  rtf_speed_threshold: none; below/above one verified with deterministic L1 clocks
+logging:
+  queue_records_max: 256
+  metrics_record_bytes_max: 16384
+  metrics_file_bytes_max: 16777216
+  windows_per_direction_max: 256
+  truth_limits_unchanged: true
+remaining:
+  - Full cost/replay matrix, repeated statistical overhead estimation and rich GRC channels.
+  - Full-stack campaign, radio outcomes and codelet-versus-native diagnostic qualification.

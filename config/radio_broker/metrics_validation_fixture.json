@@ -1,0 +1,24 @@
+{
+  "schema_version": "radio_metrics_validation_fixture_v1",
+  "qualification": "development_only",
+  "master_seed": 41,
+  "sample_rate_hz": 23040000,
+  "every_messages": 4,
+  "warmup_frame_samples": {"DL": [0, 11], "UL": [0, 19]},
+  "waveform": "native_cf32_repeating_1_i_minus1_minusi_with_postwarmup_silence_300_620",
+  "cases": {
+    "identity-ragged": {"metrics": true, "identity": true, "frame_samples": [0, 1, 0, 17, 257, 4096, 0, 8191, 16383, 36592, 0]},
+    "fixed-ragged-on": {"metrics": true, "identity": false, "frame_samples": [0, 1, 0, 17, 257, 4096, 0, 8191, 16383, 36592, 0]},
+    "fixed-ragged-off": {"metrics": false, "identity": false, "frame_samples": [0, 1, 0, 17, 257, 4096, 0, 8191, 16383, 36592, 0]},
+    "fixed-paced": {"metrics": true, "identity": false, "frame_samples": [0, 1, 0, 17, 257, 4096, 0, 8191, 16383, 36592, 0], "before_round_delay_ms": [0, 20, 0, 40, 20, 40, 0, 20, 40, 20, 0]},
+    "empty-only": {"metrics": true, "identity": false, "frame_samples": [0, 0, 0, 0, 0, 0, 0, 0]},
+    "exact-full-window": {"metrics": true, "identity": false, "frame_samples": [0, 1, 17, 257, 4096, 3822]},
+    "final-partial-window": {"metrics": true, "identity": false, "frame_samples": [0, 1, 17, 257, 4728]},
+    "upstream-delay-stall-stop": {"metrics": true, "identity": false, "frame_samples": [0, 1, 0, 17, 257, 4096, 0, 8191, 16383, 36592, 0], "upstream_delay_ms_by_round": {"3": 20, "5": 40}, "delay_directions": ["DL", "UL"], "post_resource_endpoint_stall": {"direction": "DL", "upstream_reply": false, "hold_ms": 40}}
+  },
+  "resource_support": "baseline_after_warmup_ARM_before_first_measured_request_to_after_last_reply_and_quiescent_STATUS; deliberate_final_stall_is_outside_resource_interval",
+  "loop_order": "round_then_DL_then_UL",
+  "pacing": "monotonic_deadline_sleep_before_selected_rounds; retain_actual_elapsed_and_harness_CPU",
+  "budgets": {"process_cases": 16, "case_seconds": 20, "io_seconds": 4, "owned_stop_seconds": 5, "post_warmup_samples_per_direction_max": 65537, "raw_bytes_per_direction_max": 2097152, "resource_observations_max": 64},
+  "acceptance": {"identity_bytes": "exact", "instrumentation_pair_output_and_terminal_DSP_state": "exact", "component_energy_relative_tolerance": 0.00001, "component_energy_absolute_tolerance": 0.00000001, "processing_or_CPU_speed_threshold": null}
+}

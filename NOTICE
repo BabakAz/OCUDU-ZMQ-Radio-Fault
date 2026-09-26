@@ -1,0 +1,28 @@
+OCUDU radio fault injection
+Copyright (C) 2026 The ocudu-radio-fault-injection authors (see AUTHORS.md)
+
+This program is free software: you can redistribute it and/or modify it
+under the terms of the GNU General Public License, version 3, as published
+by the Free Software Foundation (SPDX: GPL-3.0-only). It is distributed in
+the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
+implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+the LICENSE file for the full terms.
+
+Source files that carry no license header are covered by the same license.
+
+Third-party material and standards
+----------------------------------
+
+config/channel_broker/tr38901_tdl_v19.4.0.json transcribes the normalized
+delays and powers of the TDL models of 3GPP TR 38.901 V19.4.0 (ETSI TR 138
+901, Release 19), clause 7.7.2, and cites that source. The legacy EPA, EVA
+and ETU delay/power tables in scripts/ocudu_channel_broker.py follow 3GPP
+TS 36.101/36.104 Annex B. 3GPP specifications are (C) ETSI and the 3GPP
+Organizational Partners; the numerical tables are reproduced for
+interoperability.
+
+scripts/radio_schedule_sha256.h is an independent implementation of SHA-256
+as specified in NIST FIPS 180-4, whose constants it uses.
+
+The optional GUI of scripts/ocudu_channel_broker.py imports GNU Radio and
+PyQt5 at run time; neither is distributed with this repository.

@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it together with the accompanying paper."
+type: software
+title: "OCUDU radio fault injection: C and Python ZMQ channel brokers with finite, verifiable radio faults"
+version: 1.0.0
+license: GPL-3.0-only
+repository-code: "https://github.com/BabakAz/ocudu-radio-fault-injection"
+authors:
+  - alias: BabakAz
+  - alias: MaximBitiu1
+abstract: >-
+  Two interchangeable channel brokers for the ZeroMQ virtual radio of OCUDU
+  and srsRAN-family 5G NR gNBs and srsUE, with finite, directional,
+  sample-scheduled faults (blanking, attenuation, AWGN, CW, carrier-frequency
+  offset and static 3GPP TR 38.901 TDL-A/TDL-C), authenticated arming,
+  explicit restoration and verifiable truth records. Released from the study
+  "Controlled Radio Fault Injection and Cross-Layer Observability for Open 5G
+  RANs".
+keywords:
+  - 5G NR
+  - Open RAN
+  - fault injection
+  - channel emulation
+  - ZeroMQ
+  - OCUDU
+  - srsRAN

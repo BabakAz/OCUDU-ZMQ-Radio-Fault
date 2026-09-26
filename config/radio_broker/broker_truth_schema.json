@@ -1,0 +1,238 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Finite CPU broker truth envelope v1",
+  "description": "UTF-8 JSONL, maximum4096 bytes per record and1MiB per instance. Parser rejects NaN/Infinity and duplicate keys. Sequence, lifecycle, identity, requested/processed/forwarded boundaries and per-type details are checked against the retained plan and peer captures by the schedule validator; envelope shape alone never qualifies a trial.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "study_id",
+    "protocol_id",
+    "trial_id",
+    "pipeline_id",
+    "instance_id",
+    "backend",
+    "build_sha256",
+    "config_sha256",
+    "plan_sha256",
+    "direction",
+    "event_sequence",
+    "event_type",
+    "monotonic_ns",
+    "wall_ns",
+    "sample_start",
+    "sample_end",
+    "scope",
+    "details"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "radio_broker_truth_v1"
+    },
+    "study_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$"
+    },
+    "protocol_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$"
+    },
+    "trial_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$"
+    },
+    "pipeline_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$"
+    },
+    "instance_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{32}$"
+    },
+    "backend": {
+      "enum": [
+        "c",
+        "grc"
+      ]
+    },
+    "build_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "config_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "plan_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "direction": {
+      "enum": [
+        "DL",
+        "UL",
+        "control"
+      ]
+    },
+    "event_sequence": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 18446744073709551615
+    },
+    "event_type": {
+      "enum": [
+        "started",
+        "ready",
+        "arm_requested",
+        "armed",
+        "condition_applied",
+        "condition_restored",
+        "progress",
+        "error",
+        "final"
+      ]
+    },
+    "monotonic_ns": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615
+    },
+    "wall_ns": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615
+    },
+    "sample_start": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "sample_end": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "scope": {
+      "enum": [
+        "processed_samples",
+        "successfully_forwarded_samples",
+        "control"
+      ]
+    },
+    "details": {
+      "type": "object"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "direction": {
+            "const": "control"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "scope": {
+            "const": "control"
+          },
+          "sample_start": {
+            "type": "null"
+          },
+          "sample_end": {
+            "type": "null"
+          },
+          "event_type": {
+            "enum": [
+              "started",
+              "ready",
+              "arm_requested",
+              "error"
+            ]
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "sample_start": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 18446744073709551615
+          },
+          "sample_end": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 18446744073709551615
+          },
+          "scope": {
+            "enum": [
+              "processed_samples",
+              "successfully_forwarded_samples"
+            ]
+          },
+          "event_type": {
+            "enum": [
+              "armed",
+              "condition_applied",
+              "condition_restored",
+              "progress",
+              "final"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "progress"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "scope": {
+            "const": "successfully_forwarded_samples"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "enum": [
+              "armed",
+              "condition_applied",
+              "condition_restored",
+              "final"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "scope": {
+            "const": "processed_samples"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+[project]
+name = "ocudu-radio-fault-injection"
+version = "1.0.0"
+description = "C and Python ZMQ channel brokers with finite, verifiable radio fault injection for OCUDU/srsRAN 5G NR testbeds"
+readme = "README.md"
+license = "GPL-3.0-only"
+license-files = ["LICENSE"]
+requires-python = ">=3.12"
+# Exact versions of the study's reference environment (CPython 3.13.14).
+dependencies = [
+  "numpy==2.5.1",
+  "scipy==1.18.0",
+  "pyzmq==27.1.0",
+  "PyYAML==6.0.3",
+]
+
+[dependency-groups]
+test = ["pytest==9.1.1"]
+# The optional legacy GNU Radio GUI also needs GNU Radio, PyQt5 and sip from
+# the system package manager; the headless relay used by every recipe does not.
+gui = ["packaging==26.2"]
+
+[tool.uv]
+package = false
+default-groups = ["test"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

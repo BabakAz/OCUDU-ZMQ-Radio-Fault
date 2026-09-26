@@ -1,0 +1,108 @@
+# OCUDU gNB behind a C or Python channel broker (ZMQ virtual radio).
+#
+# Derived from the single-UE configuration used in the paper's study. The
+# study build additionally carried jBPF telemetry, native-metrics and
+# remote-control sections; those belong to the separate telemetry testbed
+# and are omitted here because the brokers do not depend on them.
+#
+# Port topology (the UE configuration keeps the direct ports 2000/2001):
+#   gNB TX  REP bind tcp://127.0.0.1:4000  <- broker DL REQ (connect)
+#   broker DL REP bind tcp://127.0.0.1:2000 <- UE RX REQ
+#   UE TX   REP bind tcp://127.0.0.1:2001  <- broker UL REQ (connect)
+#   broker UL REP bind tcp://127.0.0.1:4001 <- gNB RX REQ
+#
+# For a brokerless control, point tx_port/rx_port back at 2000/2001.
+# Start the broker before the gNB and the UE.
+
+cu_cp:
+  amf:
+    addrs: 127.0.0.5
+    port: 38412
+    bind_addrs: 127.0.0.1
+    supported_tracking_areas:
+      - tac: 1
+        plmn_list:
+          - plmn: "99970"
+            tai_slice_support_list:
+              - sst: 1
+
+ru_sdr:
+  device_driver: zmq
+  device_args: tx_port=tcp://127.0.0.1:4000,rx_port=tcp://127.0.0.1:4001,base_srate=23.04e6
+  # Every recipe in scripts/radio_fault.py is defined at 23.04 Msps; the
+  # profile adapter rejects a gNB or UE configured at another rate.
+  srate: 23.04
+  # OCUDU's ZMQ driver accepts only non-positive gains; 0.0 is neutral.
+  tx_gain: 0.0
+  rx_gain: 0.0
+
+cell_cfg:
+  dl_arfcn: 368500
+  band: 3
+  channel_bandwidth_MHz: 20
+  common_scs: 15
+  plmn: "99970"
+  tac: 1
+  pdcch:
+    dedicated:
+      ss2_type: common
+      dci_format_0_1_and_1_1: false
+    common:
+      ss0_index: 0
+      coreset0_index: 12
+  prach:
+    prach_config_index: 1
+  # Resilience profile retained from the study so that short injected
+  # faults do not immediately release the software UE. These values differ
+  # from OCUDU defaults: radio-link-failure incidence and timing measured
+  # with this file are not representative of a default deployment.
+  pdsch:
+    mcs_table: qam64
+    max_consecutive_kos: 10000
+  pusch:
+    mcs_table: qam64
+    max_consecutive_kos: 10000
+  pucch:
+    max_consecutive_kos: 10000
+  sib:
+    t310: 2000
+    n310: 20
+    n311: 10
+    t311: 30000
+
+srbs:
+  - srb_id: 1
+    rlc:
+      tx:
+        sn: 12
+        t-poll-retransmit: 45
+        max-retx-threshold: 32
+        poll-pdu: -1
+        poll-byte: -1
+        queue-size: 32
+      rx:
+        sn: 12
+        t-reassembly: 35
+        t-status-prohibit: 0
+  - srb_id: 2
+    rlc:
+      tx:
+        sn: 12
+        t-poll-retransmit: 45
+        max-retx-threshold: 32
+        poll-pdu: -1
+        poll-byte: -1
+        queue-size: 32
+      rx:
+        sn: 12
+        t-reassembly: 35
+        t-status-prohibit: 0
+
+log:
+  filename: /tmp/gnb.log
+  all_level: info
+  flush_app_banner: true
+
+pcap:
+  mac_enable: false
+  ngap_enable: false

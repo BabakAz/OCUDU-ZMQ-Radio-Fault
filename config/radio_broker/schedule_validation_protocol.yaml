@@ -1,0 +1,88 @@
+schema_version: radio_schedule_validation_protocol_v1
+status: prospective_engineering_acceptance
+source_baseline: 7132f93576f43575e7f79f0863c594e9364ad50e
+scope: finite fixed-reference schedules; no live stack or scientific campaign
+frozen_before_l2: true
+master_seed: 41
+schedule_duration_samples: 4097
+canonical_schedule: config/radio_broker/finite_schedule.fixture.json
+canonical_profile: config/radio_broker/fixed_reference.fixture.json
+boundaries:
+  exact_integer_samples: true
+  empty_frames_advance_samples: false
+  relative_l2_error_max: 0.000001
+  scaled_absolute_error_max: 0.00001
+  maximum_error_scale: max(1, maximum_absolute_reference_sample)
+  identity: exact_bytes
+  message_lengths_and_counts: exact
+  deterministic_noise_scope: same backend/environment/full input including warmup and same state evolution
+  cross_backend_noise_identity: not_claimed
+  power_distribution_requalification: outside_this_schedule_step
+c_l1:
+  warmup_samples: {DL: 19, UL: 31}
+  post_arm_samples: 8193
+  input: bounded deterministic QPSK plus declared zero spans in test fixture
+  partitions: [whole, fixed_257, fixed_1024, fixed_4096, irregular_1_2_3_17_257_1024_4096]
+  extra_boundary_samples: [0, 1, 17, 257, message_end, final_sample]
+  independent_oracle: piecewise gain and CW with noise disabled
+  additional_checks: [SHA256_known_vectors, no_op_state_continuity, identity, parser_rejection, overflow, writer_failure]
+python_l1:
+  warmup_samples: 37
+  post_arm_samples: 5003
+  input: unit CF32 with silence on post-arm half-open interval [901,1203)
+  partitions: [whole, fixed_257, fixed_1024, irregular_1_2_7_31_257_801_4093]
+  separate_arm_epoch_samples: {DL: 37, UL: 53}
+  independent_oracle: piecewise gain/noise/CW using an unsplit innovation draw and preserved piecewise phase
+  frequency_change_hz: [1440000, -2880000]
+  analytic_scaled_absolute_error_max: 0.000001
+  additional_checks: [no_op_state_continuity, identity, parser_rejection, overflow, writer_failure, bounded_shutdown]
+l2:
+  backends: [c, grc]
+  cases_per_backend: 17
+  total_process_cases: 34
+  cases:
+    - piecewise
+    - piecewise-partition
+    - piecewise-no-noop
+    - noop-only
+    - noop-only-partition
+    - identity
+    - unarmed-stop
+    - dl-only-stop
+    - partial-stop
+    - wrong-token
+    - stale-instance
+    - stale-plan
+    - sequence-gap
+    - same-sequence-different
+    - repeated-arm
+    - oversized
+    - malformed
+  warmup_samples: {DL: 11, UL: 19}
+  post_arm_samples: 5003
+  input: repeated unit CF32; silence on post-arm half-open interval [300,620)
+  total_samples_per_direction: {DL: 5014, UL: 5022}
+  unpartitioned_reply_samples: {DL: [17, 4986], UL: [5003]}
+  partition_boundaries: [0, 17, 18, 257, 1024, 1537, 2048, 4097, 5003]
+  interspersed_empty_frames: true
+  case_wall_timeout_seconds: 20
+  io_timeout_seconds: 4
+  stop_timeout_seconds: 5
+  control_timeout_seconds: 2
+  accepted_control_requests_per_case_max: 32
+  raw_capture_bytes_per_direction_max: 2097152
+  independent_oracle: piecewise gain/CW on every noise-disabled segment
+  controlled_error_cases: expected nonzero exit and explicitly incomplete/invalid truth; never counted as successful treatment trials
+  input_output_capture: exact finite private IPC peers; existing owned-child cleanup
+truth:
+  record_bytes_max: 4096
+  pending_records_max: 256
+  instance_total_bytes_max: 1048576
+  sequence: contiguous global event sequence starting1
+  timestamps: integer monotonic and wall nanoseconds; separately observed direction epochs
+  requested_processed_forwarded: separate
+  loss_or_missing_final: invalidates_completion
+remaining_matrix:
+  - Scheduled transport stall/absent peer cases remain distinct from earlier unscheduled lifecycle evidence.
+  - L1 injected logging failure is not an actual-process L2 sink-failure result.
+  - Cost/progress windows and complete acceptance matrix remain RAD08/RAD09.

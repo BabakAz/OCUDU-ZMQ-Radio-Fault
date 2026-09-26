@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Finite CPU broker schedule development schema",
+  "description": "Structural schema only. The compiler additionally verifies profile hash, profile-specific Nyquist bounds, strictly increasing offsets, unique event IDs, offsets below duration, identity no-ops and final restoration. No live authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "qualification",
+    "profile_sha256",
+    "study_id",
+    "protocol_id",
+    "trial_id",
+    "pipeline_id",
+    "directions"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "radio_broker_schedule_v1"
+    },
+    "qualification": {
+      "const": "development_only"
+    },
+    "profile_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "study_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$"
+    },
+    "protocol_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$"
+    },
+    "trial_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$"
+    },
+    "pipeline_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$"
+    },
+    "directions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "DL",
+        "UL"
+      ],
+      "properties": {
+        "DL": {
+          "$ref": "#/$defs/direction"
+        },
+        "UL": {
+          "$ref": "#/$defs/direction"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "settings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gain",
+        "noise_enabled",
+        "noise_snr_db",
+        "cw_enabled",
+        "cw_sir_db",
+        "cw_freq_hz"
+      ],
+      "properties": {
+        "gain": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "noise_enabled": {
+          "type": "boolean"
+        },
+        "noise_snr_db": {
+          "type": "number",
+          "minimum": -100,
+          "maximum": 100
+        },
+        "cw_enabled": {
+          "type": "boolean"
+        },
+        "cw_sir_db": {
+          "type": "number",
+          "minimum": -100,
+          "maximum": 100
+        },
+        "cw_freq_hz": {
+          "type": "number",
+          "minimum": -125000000,
+          "maximum": 125000000
+        }
+      }
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sample_offset",
+        "event_id",
+        "kind",
+        "settings"
+      ],
+      "properties": {
+        "sample_offset": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9223372036854775806
+        },
+        "event_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$"
+        },
+        "kind": {
+          "enum": [
+            "set",
+            "restore"
+          ]
+        },
+        "settings": {
+          "$ref": "#/$defs/settings"
+        }
+      }
+    },
+    "direction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "duration_samples",
+        "events"
+      ],
+      "properties": {
+        "duration_samples": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9223372036854775807
+        },
+        "events": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/event"
+          }
+        }
+      }
+    }
+  }
+}

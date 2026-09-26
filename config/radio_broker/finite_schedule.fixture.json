@@ -1,0 +1,138 @@
+{
+  "schema_version": "radio_broker_schedule_v1",
+  "qualification": "development_only",
+  "profile_sha256": "518b2e236b18fadcf09dc25aff6adc3665e891d8b0d65c3247759093b2adfa5b",
+  "study_id": "radio_broker_workshop",
+  "protocol_id": "rad06_development_v1",
+  "trial_id": "finite_fixture",
+  "pipeline_id": "private_l2_fixture",
+  "directions": {
+    "DL": {
+      "duration_samples": 4097,
+      "events": [
+        {
+          "sample_offset": 0,
+          "event_id": "baseline",
+          "kind": "set",
+          "settings": {
+            "gain": 1.0,
+            "noise_enabled": true,
+            "noise_snr_db": 20.0,
+            "cw_enabled": false,
+            "cw_sir_db": 10.0,
+            "cw_freq_hz": 1440000.0
+          }
+        },
+        {
+          "sample_offset": 17,
+          "event_id": "attenuation",
+          "kind": "set",
+          "settings": {
+            "gain": 0.25,
+            "noise_enabled": true,
+            "noise_snr_db": 20.0,
+            "cw_enabled": false,
+            "cw_sir_db": 10.0,
+            "cw_freq_hz": 1440000.0
+          }
+        },
+        {
+          "sample_offset": 257,
+          "event_id": "tone",
+          "kind": "set",
+          "settings": {
+            "gain": 1.0,
+            "noise_enabled": false,
+            "noise_snr_db": 20.0,
+            "cw_enabled": true,
+            "cw_sir_db": 10.0,
+            "cw_freq_hz": 1440000.0
+          }
+        },
+        {
+          "sample_offset": 1024,
+          "event_id": "mask",
+          "kind": "set",
+          "settings": {
+            "gain": 0.0,
+            "noise_enabled": false,
+            "noise_snr_db": 20.0,
+            "cw_enabled": true,
+            "cw_sir_db": 10.0,
+            "cw_freq_hz": 1440000.0
+          }
+        },
+        {
+          "sample_offset": 1537,
+          "event_id": "noop",
+          "kind": "set",
+          "settings": {
+            "gain": 0.0,
+            "noise_enabled": false,
+            "noise_snr_db": 20.0,
+            "cw_enabled": true,
+            "cw_sir_db": 10.0,
+            "cw_freq_hz": 1440000.0
+          }
+        },
+        {
+          "sample_offset": 2048,
+          "event_id": "restore",
+          "kind": "restore",
+          "settings": {
+            "gain": 1.0,
+            "noise_enabled": true,
+            "noise_snr_db": 20.0,
+            "cw_enabled": false,
+            "cw_sir_db": 10.0,
+            "cw_freq_hz": 1440000.0
+          }
+        }
+      ]
+    },
+    "UL": {
+      "duration_samples": 4097,
+      "events": [
+        {
+          "sample_offset": 0,
+          "event_id": "baseline",
+          "kind": "set",
+          "settings": {
+            "gain": 1.0,
+            "noise_enabled": true,
+            "noise_snr_db": 28.0,
+            "cw_enabled": false,
+            "cw_sir_db": 20.0,
+            "cw_freq_hz": 0.0
+          }
+        },
+        {
+          "sample_offset": 1537,
+          "event_id": "noop",
+          "kind": "set",
+          "settings": {
+            "gain": 1.0,
+            "noise_enabled": true,
+            "noise_snr_db": 28.0,
+            "cw_enabled": false,
+            "cw_sir_db": 20.0,
+            "cw_freq_hz": 0.0
+          }
+        },
+        {
+          "sample_offset": 2048,
+          "event_id": "restore",
+          "kind": "restore",
+          "settings": {
+            "gain": 1.0,
+            "noise_enabled": true,
+            "noise_snr_db": 28.0,
+            "cw_enabled": false,
+            "cw_sir_db": 20.0,
+            "cw_freq_hz": 0.0
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "schema_version": "radio_broker_profile_v1",
+  "channel_semantics_version": "fixed_reference_v1",
+  "rng_version": "component_streams_v1",
+  "qualification": "development_only",
+  "sample_rate_hz": 23040000,
+  "master_seed": 41,
+  "reference_provenance": "synthetic-unit-complex-power-v1",
+  "directions": {
+    "DL": {
+      "mode": "fixed",
+      "reference_power": 1,
+      "desired_gain": 1,
+      "noise": {"enabled": true, "snr_db": 20},
+      "cw": {"enabled": false, "sir_db": 10, "frequency_hz": 1440000}
+    },
+    "UL": {
+      "mode": "fixed",
+      "reference_power": 1,
+      "desired_gain": 1,
+      "noise": {"enabled": true, "snr_db": 28},
+      "cw": {"enabled": false, "sir_db": 20, "frequency_hz": 0}
+    }
+  }
+}

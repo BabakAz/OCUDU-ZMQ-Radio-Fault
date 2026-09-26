@@ -1,0 +1,64 @@
+{
+  "description": "Files released byte-for-byte from the study repository that produced the paper. Each digest is identical at both paper-cited revisions and at the extraction commit.",
+  "identical_files": {
+    "config/channel_broker/tr38901_tdl_v19.4.0.json": "2e51ec2a7ac0718627f99ac7952026350fba1294438721ace1edf9ab9d895f91",
+    "config/radio_broker/broker_metrics_schema.json": "babde5743cec5224d822c846cbc06d0906dbc7e9a08bff2be95109c13351cc7d",
+    "config/radio_broker/broker_truth_schema.json": "89ef7e28a12961f24d84da67eda38096295429594baef0f20265fa78de931cdc",
+    "config/radio_broker/finite_schedule.fixture.json": "af3186c78d8f2ee1cdf84f32dbf8dbe581ff9aa0ea91e4eaad5e013dd716d8ff",
+    "config/radio_broker/fixed_reference.fixture.json": "8fd8a7288c50e2e4c1241b735731ee3ef632fd1e174c2f971fd0c236eb310163",
+    "config/radio_broker/metrics_validation_fixture.json": "4ada33034084086b36a7642efba1f33c61a5ba60cfab9bd32305cec89e7a7a56",
+    "config/radio_broker/metrics_validation_protocol.yaml": "1a5056085be1e32af950edc24f1315fadf3caeb9003bb8e66eafa4faed169068",
+    "config/radio_broker/schedule_schema.json": "fbcfd1a2b99257e24dacc3d45bba747094c2c01a83fe70ddcb77b9ed73f78acb",
+    "config/radio_broker/schedule_validation_protocol.yaml": "0e3bf91793ade020133b1b68fe04a8d77e852b24c77db08777a1babd6bf78db0",
+    "scripts/ocudu_channel_broker.py": "900fbe5534d6b7118f579130cfd71f4668f44edf43f6cc05e0f742ec15e28c4b",
+    "scripts/radio_broker_control.py": "682d92b0e655d40c38c0da6766f4fcd01804b436841acea3de0b19b337647ad5",
+    "scripts/radio_broker_metrics.py": "5d8786b87821e0c79ccd58fbab67dff0b0febc40b63207dd3fc4c70590d0eff3",
+    "scripts/radio_broker_profile.py": "7ca7d6da4f0621ad9d0072a03a1579f5a340e4711d356656a85a4bbdd3165b72",
+    "scripts/radio_broker_resources.py": "d4d0bbd6f061424bcc20bb9fd4d8d6eb55eeea7e252734ea8d9eb8d02bb87424",
+    "scripts/radio_broker_schedule.py": "ddba6cf814130a4972d4f2c34589ea3e47ddf0a494439865a6148ab2723df179",
+    "scripts/radio_metrics_native.h": "6ba4b80af89c9863e9867ddfc9104be0d2b0178d32c34ee60daef086f6f69c3f",
+    "scripts/radio_schedule_native.h": "9cb811e6802c36e9fe0c8e0626dc6f4dd2da2761c921338df468cbea830c429d",
+    "scripts/radio_schedule_runtime.py": "799a62393a262dfc596187612301154189c89b31690b35e70f1dafde93f8ccb1",
+    "scripts/radio_schedule_sha256.h": "2e9932b06966032a79b21ba76f91a0f593e2c30544aa03a7ad9fa53e02deea1f",
+    "scripts/radio_static_tdl.py": "73c3b275fd514ec9fb63028e9e981ecc33f3d4a4f594195642dc9cc03fca3c2d",
+    "scripts/validate_broker.py": "158601eefee99c37fd0c1c305c1e75ba48321acfb36f6a6574ed7855dcdcf1f5",
+    "scripts/zmq_channel_broker.c": "8fe799ab090356dda7bd1b83956ec8ddb20da20d64182b5c17f1d1bc79254130"
+  },
+  "recipe_source": {
+    "equivalence": "All 16 recipes and the N0/B1/B5 arms reproduce the study's specification, profile, schedule and compiled-plan SHA-256 (tests/test_radio_fault_recipes.py).",
+    "module": "scripts/ocudu_observability_pilot.py and scripts/ocudu_observability_study.py",
+    "released_as": "scripts/radio_fault.py"
+  },
+  "recorded_build_identities": {
+    "c_broker_binary_sha256": {
+      "meaning": "SHA-256 of the C broker executable (/proc/self/exe) reported in broker_ready and truth records",
+      "recorded_by": [
+        "V3 repeated comparison (all broker truth records)",
+        "C additive AWGN/CW pilots and their control"
+      ],
+      "toolchain": "Ubuntu clang 18.1.3, -std=c17 -O2 -Wall -Wextra -Wpedantic -Werror, -lzmq -lm -pthread, libzmq 4.3.5, Ubuntu 24.04 x86_64",
+      "value": "edccbe563f0cf5e5cd9795d3b8d26ef7350fc6b53b3458e9deff558407c17a9f"
+    },
+    "earlier_python_broker_revisions": {
+      "2df68731b979b68a39650873439eb9b18f5cb5a8c60de929a5eb8b2fc4459cc8": "150d883: GRC CFO pair and first GRC additive pilots",
+      "4bea8d2f3fc769ec3a5aaa04b2aed71bab9d2ab637920b20ef009adf35170280": "b062adb: static TDL-A pair",
+      "4c1ddc6b5daa547e58210c2d0338739f57e9ddbaa83ed45410cc136b351886da": "902753d: GRC additive accounting pilots",
+      "8d264727251aaa5f2b4fabcd8eb5b8ed6cef3129ad2f89e6e5e3ad784f9b1380": "bf7ca54: GRC additive low-load pilots",
+      "note": "Earlier Python-broker experiments ran earlier revisions of these modules; the composite's file list also grew as modules were added. Those revisions remain in the study repository history."
+    },
+    "python_broker_source_composite_sha256": {
+      "meaning": "radio_schedule_runtime.source_build_sha256(): SHA-256 over 'name sha256\\n' lines of the six Python broker modules",
+      "recorded_by": [
+        "static TDL-C control and exposure (including the retry)"
+      ],
+      "value": "8e7821a286ea642b80d8e00ad8b700edf5bb8a23ecda7de4ea4069c9be5cd583"
+    }
+  },
+  "revisions": {
+    "executed_v3_source": "ae71bc701e7bdf3511433b94c15496e8b3488f18",
+    "extraction_commit": "a175e47203e3f6e3dd06cf57162291b752949fe5",
+    "historical_evidence_snapshot": "f43943cc3071dca4a0c10e080f93a26ce32ffc91"
+  },
+  "schema_version": "radio_fault_provenance_v1",
+  "study_repository": "OCUDU-Telemetry (study repository; private)"
+}

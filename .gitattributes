@@ -1,0 +1,13 @@
+# The released broker sources, TDL catalog and fixtures are verified by
+# SHA-256 (provenance/study_manifest.json; the TDL catalog also at runtime),
+# so every text file keeps LF line endings on every platform.
+*         text=auto eol=lf
+*.c       text eol=lf
+*.h       text eol=lf
+*.py      text eol=lf
+*.json    text eol=lf
+*.yaml    text eol=lf
+*.yml     text eol=lf
+*.md      text eol=lf
+*.conf    text eol=lf
+Makefile  text eol=lf

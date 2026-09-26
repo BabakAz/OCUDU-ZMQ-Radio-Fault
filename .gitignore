@@ -1,0 +1,18 @@
+# Build outputs
+/build/
+*.o
+*.so
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+
+# Local validator and demo outputs (the validators write under artifacts/)
+/artifacts/
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
