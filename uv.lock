@@ -157,7 +157,7 @@ wheels = [
 ]
 
 [[package]]
-name = "ocudu-radio-fault-injection"
+name = "ocudu-zmq-radio-fault"
 version = "1.0.0"
 source = { virtual = "." }
 dependencies = [

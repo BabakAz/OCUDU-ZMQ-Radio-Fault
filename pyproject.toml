@@ -1,5 +1,5 @@
 [project]
-name = "ocudu-radio-fault-injection"
+name = "ocudu-zmq-radio-fault"
 version = "1.0.0"
 description = "C and Python ZMQ channel brokers with finite, verifiable radio fault injection for OCUDU/srsRAN 5G NR testbeds"
 readme = "README.md"

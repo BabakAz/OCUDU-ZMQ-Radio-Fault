@@ -1,4 +1,4 @@
-# OCUDU radio fault injection
+# OCUDU-ZMQ-Radio-Fault
 
 Controlled, finite radio faults for software 5G NR testbeds that connect an
 OCUDU or srsRAN-family gNB and srsUE through the ZeroMQ (ZMQ) virtual radio.

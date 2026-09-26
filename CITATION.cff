@@ -1,10 +1,10 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it together with the accompanying paper."
 type: software
-title: "OCUDU radio fault injection: C and Python ZMQ channel brokers with finite, verifiable radio faults"
+title: "OCUDU-ZMQ-Radio-Fault: C and Python ZMQ channel brokers with finite, verifiable radio faults"
 version: 1.0.0
 license: GPL-3.0-only
-repository-code: "https://github.com/BabakAz/ocudu-radio-fault-injection"
+repository-code: "https://github.com/BabakAz/OCUDU-ZMQ-Radio-Fault"
 authors:
   - alias: BabakAz
   - alias: MaximBitiu1
