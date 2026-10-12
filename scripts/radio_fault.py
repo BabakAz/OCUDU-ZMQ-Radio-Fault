@@ -183,7 +183,7 @@ def specification(kind, seed=41, *, traffic_bitrate="5M"):
     elif kind == "ul_attenuation_500ms":
         result.update(pulse_duration_samples=RATE // 2, pulse_count=1, pulse_gain=0.125)
     elif kind in ADDITIVE_KINDS or kind == "c_fixed_normal":
-        # Rounded input-side mean of the retained normal 555dc161 UL prefix.
+        # Fixed reference parameter; its legacy provenance label is kept for compatibility.
         # This fixed digital reference is not an occupied-resource or physical SNR.
         result.update(pulse_duration_samples=RATE // 2, pulse_count=1, pulse_gain=1.0,
                       reference_power=10_000_000, component_reference_db=10,

@@ -1,0 +1,38 @@
+{
+  "compiled_plan_sha256": {
+    "G0": "c26b8a88b27c0086ad7de0e999ff76d4792a35a0871d6eeca9df479e67807eb7",
+    "G3": "b663ca8120d5e981fd4d15a27ffb78613217a6f7757f2aa29b754f2a8eaa438a"
+  },
+  "condition": {
+    "DL_identity": true,
+    "arm_names": [
+      "G0",
+      "G3"
+    ],
+    "level_duration_samples": 11520000,
+    "level_start_samples": [
+      92160000,
+      103680000,
+      115200000
+    ],
+    "master_seed": 137,
+    "reference_levels_db": [
+      20,
+      10,
+      0
+    ],
+    "reference_power": 10000000,
+    "restore_sample": 126720000,
+    "sample_rate_hz": 23040000,
+    "schedule_duration_samples": 230400000,
+    "whole_UL": true
+  },
+  "files_sha256": {
+    "G0.schedule.json": "17e56fb6e83c34b55defdda0d33047d65ac169850d8caff829a9ed22ab9526c8",
+    "G3.schedule.json": "37738c5385df3b1ff847e62b484eef194a803483e45796b7faba80c6f0e93821",
+    "profile.json": "4850747e5d8609d6c0ad9ba71d331fba733c07bf62e5b897ce8610f43432e545"
+  },
+  "reference_semantics": "Explicit fixed digital power; not a receiver SINR or calibrated RF value.",
+  "schema_version": "radio_fault_gradual_noise_example_v1",
+  "scope": "Reusable broker configuration example with illustrative identifiers; no experiment records."
+}

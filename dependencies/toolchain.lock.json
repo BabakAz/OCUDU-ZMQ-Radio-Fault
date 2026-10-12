@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "description": "Reference native toolchain for the C broker. The paper's recorded C broker build identity is the SHA-256 of the binary produced by this exact compiler, flags and libzmq.",
+  "description": "Reference native toolchain for the C broker. The reference build identity is the SHA-256 of the binary produced by this exact compiler, flags and libzmq.",
   "toolchain": {
     "compiler_family": "Clang",
     "compiler_version": "18.1.3",

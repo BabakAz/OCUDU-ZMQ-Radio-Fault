@@ -4,8 +4,8 @@ A **recipe** is a named, fixed radio condition: a broker profile plus a finite
 sample schedule for both directions. `scripts/radio_fault.py` freezes a recipe
 into a private control directory, arms a running broker through its
 authenticated control socket, and afterwards reconciles the broker's own truth
-records against the plan. The recipes are exactly those of the paper's study:
-each one compiles to the same plan bytes as in the study
+records against the plan. Each recipe has pinned specification, profile,
+schedule and compiled-plan identities
 ([test](../tests/test_radio_fault_recipes.py), [provenance](../PROVENANCE.md)).
 
 ## Common timing
@@ -42,20 +42,19 @@ DL transmissions (HARQ acknowledgements, CSI) as well as UL data.
 | `grc_ul_tdl_a_500ms` | Python | Static TR 38.901 TDL-A, 100 ns, over [4.0, 4.5) s |
 | `grc_tdl_c_normal` | Python | Static TDL-C control: 15-sample UL delay, channel disabled |
 | `grc_ul_tdl_c_500ms` | Python | Static TR 38.901 TDL-C, 300 ns, over [4.0, 4.5) s |
-| `N0`, `B1`, `B5` | C | The paper's repeated-comparison arms: `normal`, `ul_blank_50ms` and `ul_blank_disperse_5x10ms` |
+| `N0`, `B1`, `B5` | C | Versioned aliases for `normal`, `ul_blank_50ms` and `ul_blank_disperse_5x10ms` |
 
 Compare a fault only with the control on the same broker: C and Python use
 different random generators, and the TDL controls carry the same common delay
 as their exposures. `B1` and `B5` program the same total of 1,152,000 blanked
-samples (50 ms). The V3 arms differ from their recipes only in their schema
-and protocol identity and in the 2 Mbit/s traffic metadata that the study's
-testbed used. Specifications also carry `ul_bitrate`/`dl_bitrate` (5M or 2M)
+samples (50 ms). The V3 aliases differ from their recipes only in their schema
+and protocol identity and in their 2 Mbit/s traffic metadata.
+Specifications also carry `ul_bitrate`/`dl_bitrate` (5M or 2M)
 and `settle_seconds` for the testbed's traffic generator; the brokers ignore
 them.
 
-The additive reference power 1×10⁷ is the rounded mean UL input power of a
-no-fault capture in the study's OCUDU/srsUE setup; it is a digital
-reference, not a calibrated receiver SNR ([FIXED_REFERENCE.md](FIXED_REFERENCE.md)).
+The additive reference power 1×10⁷ is a fixed digital reference, not a
+calibrated receiver SNR ([FIXED_REFERENCE.md](FIXED_REFERENCE.md)).
 
 ```bash
 .venv/bin/python scripts/radio_fault.py list
@@ -181,3 +180,8 @@ schedule JSON (see the [fixtures](../config/radio_broker/) and
 `scripts/radio_broker_control.py`. The reconciliation functions
 `radio_fault.validate_control` and `radio_fault.validate_truth` take any
 compiled plan, so a custom harness can reuse them directly.
+
+The G0/G3 AWGN staircase is available as a
+[worked custom-schedule example](GRADUAL_NOISE.md). It preserves the original
+recipes and uses the lower-level compiler/control interface; it is not an
+additional name accepted by `radio_fault.py`.

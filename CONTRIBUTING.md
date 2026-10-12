@@ -1,17 +1,17 @@
 # Contributing
 
-Issues and pull requests are welcome. This repository doubles as the
-artifact of a paper, so a few rules keep its results reproducible.
+Issues and pull requests are welcome. The reference source and recipe
+identities make software checks reproducible.
 
-## Paper files stay byte-identical
+## Reference files stay byte-identical
 
 The 22 files listed in [`provenance/study_manifest.json`](provenance/study_manifest.json)
-are the broker, recipe-input and contract files released byte-for-byte from
-the paper's study. `make verify-provenance` and `tests/test_provenance.py` fail if one
+are the pinned broker, recipe-input and contract files.
+`make verify-provenance` and `tests/test_provenance.py` fail if one
 of them changes. If a change is really needed (for example a security fix),
 make it deliberately: update the manifest, explain the change in
 [PROVENANCE.md](PROVENANCE.md), and note that the build identities recorded
-in the paper no longer apply to the changed file.
+for the reference release no longer apply to the changed file.
 
 ## Recipes are fixed
 
@@ -27,6 +27,7 @@ changing an existing one.
 make test
 make validate-local        # when broker, schedule, control or metrics code changes
 make verify-provenance
+make verify-examples
 ```
 
 Keep changes focused, describe what was and was not tested, and keep

@@ -228,19 +228,18 @@ power, and results can depend on ZMQ message partitioning.
 - **EPA/EVA/ETU** (Python, `--profile`): TS 36.104 delay tables as a causal
   sparse FIR with per-tap 16-sinusoid Jakes approximations on an absolute
   sample clock, so trajectories are independent of message partitioning.
-  These are LTE-era stress profiles, not TR 38.901 NR models. In the study, a
-  5 Hz EPA run failed the functional gate on the retained NR receiver while
-  its zero-Doppler control passed, so dynamic multipath remains unqualified.
+  These are LTE-era stress profiles, not TR 38.901 NR models. Validate
+  receiver compatibility before using them in an NR testbed.
 - **CFO** (Python, `--cfo`), **whole-message erasure** (`--drop-prob`),
   **narrowband noise** (180 kHz filtered noise, DL only) and **scenarios**
-  (joint wall-clock variation of SNR, Doppler and erasure) are exploratory and
-  were not qualified in the study.
+  (joint wall-clock variation of SNR, Doppler and erasure) are exploratory
+  continuous modes.
 - **DL interference** (`--interference-type cw|narrowband`): superposed after
   the channel and before receiver noise, on the DL only. A CW tone is not an
   NR waveform.
 
-[FAULT_COVERAGE.md](FAULT_COVERAGE.md) records which of these families have
-full-stack evidence and which are implementation only.
+[FAULT_COVERAGE.md](FAULT_COVERAGE.md) summarizes implementation support
+and the available software checks.
 
 ## Troubleshooting
 

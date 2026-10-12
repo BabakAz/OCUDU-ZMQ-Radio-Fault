@@ -1,9 +1,7 @@
 # OCUDU gNB behind a C or Python channel broker (ZMQ virtual radio).
 #
-# Derived from the single-UE configuration used in the paper's study. The
-# study build additionally carried jBPF telemetry, native-metrics and
-# remote-control sections; those belong to the separate telemetry testbed
-# and are omitted here because the brokers do not depend on them.
+# Single-UE example. Telemetry instrumentation and remote-control
+# sections are omitted because the brokers do not depend on them.
 #
 # Port topology (the UE configuration keeps the direct ports 2000/2001):
 #   gNB TX  REP bind tcp://127.0.0.1:4000  <- broker DL REQ (connect)

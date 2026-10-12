@@ -9,12 +9,10 @@ attenuation, AWGN, CW interference, carrier-frequency offset and static
 control socket, restored explicitly, and accounted for by the broker in
 records that can be verified sample by sample after the run.
 
-This is the channel-broker and radio fault-injection framework of the paper
-*Controlled Radio Fault Injection and Cross-Layer Observability for Open 5G
-RANs* (under review). The C broker and every recipe are byte for byte the
-code behind the paper's repeated comparison, down to the C binary's hash; the
-Python broker is the revision that produced its static TDL-C results (earlier
-Python experiments ran earlier revisions). See [PROVENANCE.md](PROVENANCE.md).
+This repository provides the brokers and fault-control tools described in
+*Controlled Radio Fault Injection and Telemetry Evaluation for Open 5G RANs*
+by Babak Azkaei, Maxim Bîtiu, Georgios Exarchakos and Kishor Chandra Joshi.
+If you use these tools in research, please [cite the paper](#citing).
 
 ```text
  DL I/Q:  gNB TX ──:4000──►  broker  ──:2000──► UE RX     identity (unchanged)
@@ -33,14 +31,16 @@ Python experiments ran earlier revisions). See [PROVENANCE.md](PROVENANCE.md).
   relay with the same contract, plus CFO and static TR 38.901 TDL-A/TDL-C,
   and legacy EPA/EVA/ETU, erasure, narrowband and scenario modes with an
   optional GNU Radio GUI.
-- **Fault framework** (`scripts/radio_fault.py`): the paper's 16 recipes and
-  its three repeated-study arms (N0, B1, B5), with the full lifecycle:
+- **Fault framework** (`scripts/radio_fault.py`): 16 recipes and three
+  aliases (N0, B1, B5), with the full lifecycle:
   prepare, launch, arm, stop and verify.
+- **Stepped-noise examples**: G0/G3 profiles and schedules, with a separate
+  verifier; see [docs/GRADUAL_NOISE.md](docs/GRADUAL_NOISE.md).
 - **Broker-only demo**: any recipe through a real broker between synthetic
   gNB/UE endpoints, verified by the broker's truth records and by an
   independent IQ-level oracle; no RAN software needed.
 - **Validation**: about 1,500 tests, four actual-process validators (80
-  cases), and a provenance check against the paper's revisions.
+  cases), and source/build provenance checks.
 
 ## Quick start
 
@@ -49,11 +49,11 @@ On Ubuntu 24.04 (the reference platform):
 ```bash
 sudo apt install clang-18 libzmq3-dev pkg-config make
 curl -LsSf https://astral.sh/uv/install.sh | sh     # or use any Python 3.12+ venv, see below
-uv sync --frozen                                    # the study's exact Python environment
+uv sync --frozen                                    # the pinned Python environment
 make broker                                         # build/zmq_channel_broker
 make demo                                           # B1: one 50 ms UL blank, end to end
 make test                                           # about 2 minutes
-make verify-provenance                              # sources and C binary match the paper
+make verify-provenance                              # check source and reference-build hashes
 ```
 
 `make demo` prepares the B1 recipe, starts the C broker between synthetic
@@ -77,9 +77,11 @@ PyYAML==6.0.3 pytest==9.1.1`); `make` uses `.venv/bin/python` when present.
 | `ul_cfo_500ms` (+ `grc_normal`) | Python | +500 Hz frequency offset, 500 ms |
 | `grc_ul_tdl_a_500ms`, `grc_ul_tdl_c_500ms` (+ controls) | Python | Static TDL-A (100 ns) or TDL-C (300 ns), 500 ms |
 
-All recipes run at 23.04 Msps over a 10 s schedule and leave the downlink
-unchanged. `scripts/radio_fault.py list` and `show RECIPE` print the exact
-definitions. See [docs/FAULT_RECIPES.md](docs/FAULT_RECIPES.md).
+The recipes above run at 23.04 Msps over a 10 s schedule and leave the
+downlink unchanged. `scripts/radio_fault.py list` and `show RECIPE` print the
+exact definitions. See [docs/FAULT_RECIPES.md](docs/FAULT_RECIPES.md).
+G0/G3 use the separate [stepped-noise examples](docs/GRADUAL_NOISE.md), not
+names accepted by `radio_fault.py`.
 
 ## With a real gNB and UE
 
@@ -95,8 +97,7 @@ definitions. See [docs/FAULT_RECIPES.md](docs/FAULT_RECIPES.md).
 
 The gNB points its ZMQ radio at the broker (ports 4000/4001); the UE
 configuration is unchanged. See [docs/INTEGRATION.md](docs/INTEGRATION.md)
-for the component versions, configurations and order of operations used in
-the study.
+for compatible component versions, configurations and order of operations.
 
 ## Documentation
 
@@ -105,13 +106,14 @@ the study.
 | Recipes, lifecycle, verification, demo | [docs/FAULT_RECIPES.md](docs/FAULT_RECIPES.md) |
 | Using it with OCUDU, srsUE and Open5GS | [docs/INTEGRATION.md](docs/INTEGRATION.md) |
 | Broker architecture, options and legacy modes | [docs/BROKERS.md](docs/BROKERS.md) |
+| G0/G3 stepped-noise profiles and schedules | [docs/GRADUAL_NOISE.md](docs/GRADUAL_NOISE.md) |
 | Fixed-reference power, RNG and records | [docs/FIXED_REFERENCE.md](docs/FIXED_REFERENCE.md) |
 | Schedules, control protocol and truth records | [docs/SCHEDULES.md](docs/SCHEDULES.md) |
 | Optional per-window metrics | [docs/METRICS_CONTRACT.md](docs/METRICS_CONTRACT.md) |
 | Static TDL-A/TDL-C | [docs/STATIC_TDL.md](docs/STATIC_TDL.md) |
 | Tests, validators and what they establish | [docs/VALIDATION.md](docs/VALIDATION.md) |
-| Which fault families were exercised in the study | [docs/FAULT_COVERAGE.md](docs/FAULT_COVERAGE.md) |
-| Relation to the paper's code | [PROVENANCE.md](PROVENANCE.md) |
+| Fault support and software validation | [docs/FAULT_COVERAGE.md](docs/FAULT_COVERAGE.md) |
+| Source and build identities | [PROVENANCE.md](PROVENANCE.md) |
 
 ## Repository layout
 
@@ -120,9 +122,9 @@ the study.
 | `scripts/` | Brokers, profile/schedule/control modules, `radio_fault.py`, validators, provenance check |
 | `config/radio_broker/` | Schemas, fixtures and validation protocols |
 | `config/channel_broker/` | TR 38.901 TDL catalog |
-| `config/examples/` | gNB and srsUE ZMQ configurations for the broker path |
+| `config/examples/` | gNB/srsUE configurations and standalone G0/G3 profiles and schedules |
 | `dependencies/toolchain.lock.json` | Reference C toolchain and the recorded C binary hash |
-| `provenance/` | SHA-256 manifest of the released paper files |
+| `provenance/` | SHA-256 manifest of the preserved source files |
 | `tests/` | Offline, fixture and broker-only end-to-end tests |
 
 ## Scope
@@ -132,16 +134,22 @@ virtual radio. Component SNR/SIR values are digital ratios to a declared
 reference, not calibrated RF measurements; the static TDL path is one scalar
 realization, not a time-varying or MIMO channel; nothing here has been used
 over the air. Legacy continuous modes are provided as they were, and
-[docs/FAULT_COVERAGE.md](docs/FAULT_COVERAGE.md) records which families the
-study actually exercised. The telemetry capture, experiment runner and
-analysis that produced the paper's observability results belong to the
-study's testbed and are not part of this repository.
+[docs/FAULT_COVERAGE.md](docs/FAULT_COVERAGE.md) describes implementation and
+software-validation coverage. Telemetry collectors, experiment orchestration,
+research data and analysis are outside this repository; consult the paper
+for the research evaluation.
 
 ## Citing
 
-If you use this software, please cite the paper (full reference to follow
-publication) and this repository; [CITATION.cff](CITATION.cff) has the
-software metadata.
+If you use this software in research, please cite:
+
+Babak Azkaei, Maxim Bîtiu, Georgios Exarchakos, and Kishor Chandra Joshi.
+2026. **Controlled Radio Fault Injection and Telemetry Evaluation for Open
+5G RANs.** In *MobiHoc ’26*, November 23–26, 2026, Tokyo, Japan. ACM.
+[doi:10.1145/3842721.3856774](https://doi.org/10.1145/3842721.3856774).
+
+[BibTeX](docs/CITATION.bib) and [CITATION.cff](CITATION.cff) provide reusable
+citation metadata. An arXiv link will be added when the preprint is available.
 
 ## License
 

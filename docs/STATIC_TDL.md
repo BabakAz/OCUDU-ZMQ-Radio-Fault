@@ -45,8 +45,7 @@ does not have unit power gain.
 
 This is a static scalar realization of the selected catalog entries. It is
 **not** a time-varying 3GPP channel, a CDL/MIMO model, or evidence of RF
-conformance, and the paper does not claim otherwise: the TDL-A and TDL-C
-results are single control/exposure pairs with model-specific scope. TDL-B,
+conformance. TDL-B,
 TDL-D and TDL-E are present in the catalog but are not selectable here.
 The legacy EPA/EVA/ETU profiles of the Python broker are LTE-era stress models
 and are not TR 38.901 profiles.

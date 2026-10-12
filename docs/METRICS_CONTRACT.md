@@ -1,7 +1,6 @@
 # Broker metrics contract
 
-Optional per-window accounting for finite broker schedules. This contract was
-frozen before the study's local process qualification. It defines engineering
+Optional per-window accounting for finite broker schedules. It defines engineering
 accounting; it is not a cost benchmark or a radio measurement.
 
 ## Interface and bounds

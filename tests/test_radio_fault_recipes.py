@@ -1,10 +1,8 @@
 # SPDX-License-Identifier: GPL-3.0-only
-"""Every recipe keeps the exact identity it had in the paper's study; CLI surface checks.
+"""Reference recipe identities and CLI surface checks.
 
-The pinned digests were generated from the study's own recipe module
-(ocudu_observability_pilot.py / ocudu_observability_study.py at the executed
-revision) with seed 41 and the identities below. A change here means a trial
-prepared with this repository would no longer be the trial the paper ran.
+The pinned digests use seed 41 and the illustrative identities below.
+A change here means the recipe no longer compiles to the reference bytes.
 """
 import hashlib
 import json

@@ -7,7 +7,7 @@ level.
 
 | Level | Question | Tool |
 |---|---|---|
-| L0 | Are the released sources the paper's? | `make verify-provenance` |
+| L0 | Do sources and builds match their reference identities? | `make verify-provenance` |
 | L1 | Are the numerical cores, compilers, parsers and validators correct? | `make test` (unit and fixture tests) |
 | L2 | Do the actual broker processes behave as specified between independent peers? | `make validate-local`, `make demo`, the end-to-end tests |
 | L3 | What happens in a full RAN under a fault? | Your testbed ([INTEGRATION.md](INTEGRATION.md)); the paper's results |
@@ -19,9 +19,9 @@ make verify-provenance
 ```
 
 Checks the SHA-256 of the 22 released broker, recipe-input and contract files
-against the paper's revisions, recomputes the Python broker's build identity,
+against the reference manifest, recomputes the Python broker's build identity,
 and rebuilds the C broker with the reference compiler to compare its binary
-hash with the one recorded in the paper's broker truth records. Without clang
+hash with the recorded reference build. Without clang
 18.1.3 the C comparison is reported as not performed. See
 [PROVENANCE.md](../PROVENANCE.md).
 
@@ -41,8 +41,11 @@ make test        # about 2 minutes; compiles C harnesses with clang-18
 - **Profiles, schedules, control and resources**: strict parsing, canonical
   hashing, plan compilation, control replies and process-identity reads.
 - **Recipes** (`test_radio_fault_recipes.py`): each of the 16 recipes and the
-  three V3 arms reproduces the specification, profile, schedule and compiled
-  plan SHA-256 generated from the study's own module.
+  three V3 aliases reproduces its pinned specification, profile, schedule and
+  compiled-plan SHA-256.
+- **Stepped-noise example** (`test_gradual_noise_example.py`): pinned files
+  and plans, independent event/power checks, tamper rejection and C
+  configuration preflight for the neutral and staircase schedules.
 - **Truth reconciliation** (`test_radio_fault*.py`): forged, missing,
   duplicated or shifted control and truth records must all be rejected, and
   archived evidence must bind to the expected PID, build and trial identity.
@@ -67,7 +70,7 @@ logs and a `validation.json` report:
 | `validate_radio_broker_schedule.py` | 17 + 17 | Exact event boundaries, warm-up, partition invariance, identity, incomplete stops and authenticated-control failures |
 | `validate_radio_broker_metrics.py` | 8 + 8 | Window accounting against peer captures, timing conservation, instrumentation on/off identity |
 
-All 80 cases pass in this repository, as they did in the study. The C broker
+There are 80 cases in total. The C broker
 is rebuilt with the locked compiler for each run.
 
 ## Broker-only trials (L2)
@@ -79,6 +82,17 @@ make demo
 
 Runs one recipe through the full lifecycle with synthetic gNB/UE endpoints
 and an IQ-level oracle ([FAULT_RECIPES.md](FAULT_RECIPES.md#broker-only-demo-and-iq-oracle)).
+
+## Stepped-noise configuration example
+
+```bash
+make verify-examples
+```
+
+Checks the [G0/G3 example](GRADUAL_NOISE.md) file and compiled-plan hashes,
+event geometry and fixed-power settings, then validates both plans with the C
+broker's configuration-only mode. This check processes no I/Q samples and
+does not measure a receiver or application outcome.
 
 ## What these checks do not establish
 

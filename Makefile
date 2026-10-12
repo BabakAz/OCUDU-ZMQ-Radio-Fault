@@ -18,7 +18,7 @@ BROKER := $(BUILD)/zmq_channel_broker
 BROKER_SOURCES := scripts/zmq_channel_broker.c scripts/radio_schedule_native.h \
                   scripts/radio_schedule_sha256.h scripts/radio_metrics_native.h
 
-.PHONY: all broker test verify-provenance demo validate-local clean help
+.PHONY: all broker test verify-provenance verify-examples demo validate-local clean help
 
 all: broker
 
@@ -31,8 +31,11 @@ $(BROKER): $(BROKER_SOURCES)
 test: ## Run the complete offline test suite (starts only bounded local fixtures)
 	$(PYTHON) -m pytest -q
 
-verify-provenance: ## Check byte identity with the paper revisions and rebuild the recorded C binary
+verify-provenance: ## Check pinned sources and rebuild the reference C binary
 	$(PYTHON) scripts/verify_provenance.py
+
+verify-examples: $(BROKER) ## Check stepped-noise example hashes, settings and C configuration parsing
+	$(PYTHON) scripts/verify_gradual_noise.py --c-binary $(BROKER)
 
 demo: $(BROKER) ## Broker-only end-to-end run of the B1 blank recipe with synthetic peers
 	$(PYTHON) scripts/radio_fault.py demo ul_blank_50ms --c-binary $(BROKER)

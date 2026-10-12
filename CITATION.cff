@@ -1,21 +1,40 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it together with the accompanying paper."
+message: "If you use this software in research, please cite the accompanying paper below."
 type: software
 title: "OCUDU-ZMQ-Radio-Fault: C and Python ZMQ channel brokers with finite, verifiable radio faults"
 version: 1.0.0
 license: GPL-3.0-only
 repository-code: "https://github.com/BabakAz/OCUDU-ZMQ-Radio-Fault"
 authors:
-  - alias: BabakAz
-  - alias: MaximBitiu1
+  - family-names: Azkaei
+    given-names: Babak
+    alias: BabakAz
+  - family-names: Bîtiu
+    given-names: Maxim
+    alias: MaximBitiu1
+preferred-citation:
+  type: conference-paper
+  title: "Controlled Radio Fault Injection and Telemetry Evaluation for Open 5G RANs"
+  authors:
+    - family-names: Azkaei
+      given-names: Babak
+    - family-names: Bîtiu
+      given-names: Maxim
+    - family-names: Exarchakos
+      given-names: Georgios
+    - family-names: Joshi
+      given-names: Kishor Chandra
+  year: 2026
+  collection-title: "The Twenty-seventh International Symposium on Theory, Algorithmic Foundations, and Protocol Design for Mobile Networks and Mobile Computing (MobiHoc ’26)"
+  doi: "10.1145/3842721.3856774"
+  publisher:
+    name: ACM
 abstract: >-
   Two interchangeable channel brokers for the ZeroMQ virtual radio of OCUDU
   and srsRAN-family 5G NR gNBs and srsUE, with finite, directional,
   sample-scheduled faults (blanking, attenuation, AWGN, CW, carrier-frequency
   offset and static 3GPP TR 38.901 TDL-A/TDL-C), authenticated arming,
-  explicit restoration and verifiable truth records. Released from the study
-  "Controlled Radio Fault Injection and Cross-Layer Observability for Open 5G
-  RANs".
+  explicit restoration and verifiable truth records.
 keywords:
   - 5G NR
   - Open RAN

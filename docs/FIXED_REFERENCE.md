@@ -83,8 +83,8 @@ The [fixture](../config/radio_broker/fixed_reference.fixture.json) uses a
 synthetic unit reference power; it is a development example, not a
 calibrated operating point.
 
-The paper's additive recipes use a fixed UL reference of 1×10⁷, the rounded
-mean input power of a retained no-fault UL capture in the study. To choose a
+The additive recipes and [G0/G3 example](GRADUAL_NOISE.md) use a fixed UL
+reference of 1×10⁷. To choose a
 reference for another setup, define a clean identity interval per direction,
 reconcile its input/output counts with the peers, compute
 `P_ref = sum(I² + Q²) / N` over that interval (including zero samples), record
@@ -115,7 +115,7 @@ That is a different model and cannot represent fixed receiver noise. The
 fixed-reference path also corrects two legacy behaviors: CW phase now
 advances through silent input in both brokers, and C replaces its float32
 phase accumulator with the uint64 oscillator, so legacy CW trajectories differ
-from those of the study's earliest runs.
+between these two modes.
 
 ## Validation scope
 
