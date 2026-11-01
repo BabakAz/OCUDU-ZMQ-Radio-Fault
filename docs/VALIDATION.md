@@ -22,8 +22,9 @@ Checks the SHA-256 of the 22 released broker, recipe-input and contract files
 against the reference manifest, recomputes the Python broker's build identity,
 and rebuilds the C broker with the reference compiler to compare its binary
 hash with the recorded reference build. Without clang
-18.1.3 the C comparison is reported as not performed. See
-[PROVENANCE.md](../PROVENANCE.md).
+18.1.3, or when clang links the runtime of a GCC other than GCC 13 (for
+example with `gcc-14` installed), the C comparison is reported as not
+performed. See [PROVENANCE.md](../PROVENANCE.md).
 
 ## Test suite (L1 with bounded L2 cases)
 

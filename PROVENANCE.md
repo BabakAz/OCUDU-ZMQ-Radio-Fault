@@ -40,10 +40,25 @@ Its SHA-256 is:
 edccbe563f0cf5e5cd9795d3b8d26ef7350fc6b53b3458e9deff558407c17a9f
 ```
 
+The executable also contains the C runtime start files and `libgcc` of the
+GCC installation that clang selects, which is the newest GCC installed. The
+reference build used GCC 13, the GCC that `clang-18` depends on in Ubuntu
+24.04. With `gcc-14` also installed, clang selects GCC 14 and the same
+sources build a working broker with a different hash. Check the selection
+with:
+
+```bash
+clang-18 -v 2>&1 | grep 'Selected GCC'   # .../gcc/x86_64-linux-gnu/13 for the reference
+```
+
 `make verify-provenance` rebuilds the broker and compares this hash. If the
-reference compiler is unavailable, it reports the binary check as not
-performed. Other toolchains can produce working brokers with different
-hashes; a source match alone does not establish binary identity.
+reference compiler is unavailable, or clang selects another GCC installation,
+it reports the binary check as not performed and says why;
+`scripts/verify_provenance.py --require-reference-build` makes that a
+failure. A clean `ubuntu:24.04` container with the README's packages
+reproduces the reference build, and CI checks it there. Other toolchains can
+produce working brokers with different hashes; a source match alone does not
+establish binary identity.
 
 ## Python build identity
 

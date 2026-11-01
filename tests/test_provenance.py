@@ -23,7 +23,8 @@ def test_checkout_matches_the_paper_revisions_and_recorded_builds():
     assert report["status"] == "verified"
     assert set(report["files"].values()) == {"match"} and len(report["files"]) == 22
     assert report["python_broker_build"]["status"] == "match"
-    assert report["c_broker_build"]["status"] in ("match", "not_checked_reference_compiler_unavailable")
+    assert report["c_broker_build"]["status"] in ("match", "not_checked_reference_compiler_unavailable",
+                                                  "not_checked_reference_gcc_runtime_unavailable")
 
 
 def test_manifest_revisions_and_identities_are_the_ones_the_paper_cites():
@@ -56,10 +57,30 @@ def test_build_failures_and_missing_binaries_are_reported_not_raised(tmp_path):
     code, report = run(tmp_path)
     assert code == 1 and report["status"] == "failed"
     build = report["c_broker_build"]
-    if build["status"] != "not_checked_reference_compiler_unavailable":
+    if not build["status"].startswith("not_checked"):
         assert build["status"] == "build_failed" and "deliberately broken source" in build["compiler_output"]
     code, report = run(tmp_path, "--c-binary", str(tmp_path / "missing-broker"))
     assert code == 1 and report["c_broker_build"]["status"] == "missing"
+
+
+def test_another_gcc_runtime_skips_the_binary_check_unless_the_reference_build_is_required(tmp_path):
+    for name in ("scripts", "config", "provenance", "dependencies"):
+        shutil.copytree(ROOT / name, tmp_path / name, ignore=shutil.ignore_patterns("__pycache__"))
+    lock_path = tmp_path / "dependencies/toolchain.lock.json"
+    lock = json.loads(lock_path.read_text())
+    # clang links the C runtime files of the GCC installation it selects; any other one changes the bytes.
+    lock["reference_build"]["gcc_installation"] = "/nonexistent/gcc/x86_64-linux-gnu/13"
+    lock_path.write_text(json.dumps(lock))
+    code, report = run(tmp_path)
+    build = report["c_broker_build"]
+    assert code == 0 and report["status"] == "verified" and "sha256" not in build
+    assert build["status"] in ("not_checked_reference_compiler_unavailable",
+                               "not_checked_reference_gcc_runtime_unavailable")
+    if build["status"] == "not_checked_reference_gcc_runtime_unavailable":
+        assert build["reference_gcc_installation"] == "/nonexistent/gcc/x86_64-linux-gnu/13"
+    code, report = run(tmp_path, "--require-reference-build")
+    assert code == 1 and report["failures"] == [
+        f"the reference toolchain is unavailable, so the C build identity was not checked ({build['status']})"]
 
 
 LINK = re.compile(r"\]\(([^)\s]+)\)")

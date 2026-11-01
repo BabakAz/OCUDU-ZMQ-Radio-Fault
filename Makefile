@@ -4,8 +4,9 @@
 # check the paper provenance. `make help` lists the targets.
 
 # The paper's recorded C build identity was produced by Ubuntu clang 18.1.3
-# with exactly these flags; other compilers build a working broker but a
-# different binary hash. Override with `make CC=...` if needed.
+# with exactly these flags, linking GCC 13's C runtime (see PROVENANCE.md);
+# other compilers or GCC runtimes build a working broker but a different
+# binary hash. Override with `make CC=...` if needed.
 ifeq ($(origin CC),default)
 CC := clang-18
 endif
