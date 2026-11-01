@@ -63,8 +63,8 @@ calibrated receiver SNR ([FIXED_REFERENCE.md](FIXED_REFERENCE.md)).
 
 ## Lifecycle
 
-The paper describes a finite **freeze, arm, apply, restore, qualify**
-lifecycle. With a real gNB and UE ([INTEGRATION.md](INTEGRATION.md)):
+The [paper](../README.md#citing) describes a finite **freeze, arm, apply,
+restore, qualify** lifecycle. With a real gNB and UE ([INTEGRATION.md](INTEGRATION.md)):
 
 ```bash
 # 1. Freeze: compile the recipe into a new private control directory.

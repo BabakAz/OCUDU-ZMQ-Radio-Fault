@@ -1,5 +1,9 @@
 # OCUDU-ZMQ-Radio-Fault
 
+[![arXiv](https://img.shields.io/badge/arXiv-2610.31598-b31b1b.svg)](https://arxiv.org/abs/2610.31598)
+[![DOI](https://img.shields.io/badge/DOI-10.1145%2F3842721.3856774-blue.svg)](https://doi.org/10.1145/3842721.3856774)
+[![License: GPL-3.0-only](https://img.shields.io/badge/license-GPL--3.0--only-blue.svg)](LICENSE)
+
 Controlled, finite radio faults for software 5G NR testbeds that connect an
 OCUDU or srsRAN-family gNB and srsUE through the ZeroMQ (ZMQ) virtual radio.
 Two interchangeable channel brokers sit on the I/Q path between gNB and UE
@@ -11,7 +15,8 @@ records that can be verified sample by sample after the run.
 
 This repository provides the brokers and fault-control tools described in
 *Controlled Radio Fault Injection and Telemetry Evaluation for Open 5G RANs*
-by Babak Azkaei, Maxim Bîtiu, Georgios Exarchakos and Kishor Chandra Joshi.
+by Babak Azkaei, Maxim Bîtiu, Georgios Exarchakos and Kishor Chandra Joshi
+(MobiHoc ’26; preprint [arXiv:2610.31598](https://arxiv.org/abs/2610.31598)).
 If you use these tools in research, please [cite the paper](#citing).
 
 ```text
@@ -148,8 +153,11 @@ Babak Azkaei, Maxim Bîtiu, Georgios Exarchakos, and Kishor Chandra Joshi.
 5G RANs.** In *MobiHoc ’26*, November 23–26, 2026, Tokyo, Japan. ACM.
 [doi:10.1145/3842721.3856774](https://doi.org/10.1145/3842721.3856774).
 
-[BibTeX](docs/CITATION.bib) and [CITATION.cff](CITATION.cff) provide reusable
-citation metadata. An arXiv link will be added when the preprint is available.
+The preprint is freely available as
+[arXiv:2610.31598](https://arxiv.org/abs/2610.31598)
+([PDF](https://arxiv.org/pdf/2610.31598)). [BibTeX](docs/CITATION.bib)
+(entries for the paper and the preprint) and [CITATION.cff](CITATION.cff)
+provide reusable citation metadata.
 
 ## License
 

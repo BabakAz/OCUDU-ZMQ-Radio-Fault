@@ -27,6 +27,13 @@ preferred-citation:
   year: 2026
   collection-title: "The Twenty-seventh International Symposium on Theory, Algorithmic Foundations, and Protocol Design for Mobile Networks and Mobile Computing (MobiHoc ’26)"
   doi: "10.1145/3842721.3856774"
+  identifiers:
+    - type: doi
+      value: "10.48550/arXiv.2610.31598"
+      description: "arXiv preprint"
+    - type: url
+      value: "https://arxiv.org/abs/2610.31598"
+      description: "arXiv preprint (freely available)"
   publisher:
     name: ACM
 abstract: >-

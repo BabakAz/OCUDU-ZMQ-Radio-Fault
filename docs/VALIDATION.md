@@ -98,5 +98,5 @@ does not measure a receiver or application outcome.
 
 They do not measure RF fidelity, calibrated SNR/SIR, channel conformance,
 broker throughput or overhead, or any RAN, service or telemetry outcome.
-Those require a full testbed. The paper's own claims, including their
-limits, are stated there.
+Those require a full testbed. The [paper's](../README.md#citing) own claims,
+including their limits, are stated there.
