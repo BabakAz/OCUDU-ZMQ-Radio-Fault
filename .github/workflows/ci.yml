@@ -1,0 +1,89 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# The checks of CONTRIBUTING.md on the reference platform (Ubuntu 24.04 with
+# its clang 18.1.3 and libzmq 4.3.5). Nothing here starts a gNB, UE, core or
+# radio: the demo and validators run the real brokers between local peers.
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  reference:
+    name: Reference environment (provenance, tests, demo, validators)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install the reference C toolchain and libzmq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends clang-18 libzmq3-dev pkg-config make
+          clang-18 --version
+          pkg-config --modversion libzmq
+
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/0.11.32/install.sh | sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Create the pinned Python environment
+        run: uv sync --frozen
+
+      - name: Build the C broker
+        run: make broker
+
+      - name: Check source and build provenance
+        run: make verify-provenance
+
+      - name: Run the offline test suite
+        run: make test
+
+      - name: Check the stepped-noise examples
+        run: make verify-examples
+
+      - name: Run the broker-only demo
+        run: make demo
+
+      - name: Run the actual-process validators
+        run: make validate-local
+
+      - name: Keep the validator evidence of a failed run
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validator-artifacts
+          path: artifacts/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  python-3-12:
+    name: Tests on the system Python 3.12 without uv
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install the reference C toolchain and libzmq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends clang-18 libzmq3-dev pkg-config make python3-venv
+
+      - name: Create a virtual environment from the pyproject.toml pins
+        run: |
+          python3 --version
+          python3 -m venv .venv
+          .venv/bin/pip install $(python3 -c 'import tomllib; p = tomllib.load(open("pyproject.toml", "rb")); print(*p["project"]["dependencies"], *p["dependency-groups"]["test"])')
+
+      - name: Run the offline test suite
+        run: make broker test

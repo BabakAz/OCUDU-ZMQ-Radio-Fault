@@ -30,6 +30,10 @@ make verify-provenance
 make verify-examples
 ```
 
+[CI](.github/workflows/ci.yml) runs all of these on Ubuntu 24.04 for every
+push and pull request, and the test suite once more on the system Python 3.12
+with the `pyproject.toml` pins instead of uv.
+
 Keep changes focused, describe what was and was not tested, and keep
 documentation claims scoped to what the evidence shows: digital impairments
 are not calibrated RF, and a broker-only check is not a RAN result.

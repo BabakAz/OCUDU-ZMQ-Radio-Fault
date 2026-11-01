@@ -1,5 +1,6 @@
 # OCUDU-ZMQ-Radio-Fault
 
+[![CI](https://github.com/BabakAz/OCUDU-ZMQ-Radio-Fault/actions/workflows/ci.yml/badge.svg)](https://github.com/BabakAz/OCUDU-ZMQ-Radio-Fault/actions/workflows/ci.yml)
 [![arXiv](https://img.shields.io/badge/arXiv-2610.31598-b31b1b.svg)](https://arxiv.org/abs/2610.31598)
 [![DOI](https://img.shields.io/badge/DOI-10.1145%2F3842721.3856774-blue.svg)](https://doi.org/10.1145/3842721.3856774)
 [![License: GPL-3.0-only](https://img.shields.io/badge/license-GPL--3.0--only-blue.svg)](LICENSE)
