@@ -1161,6 +1161,10 @@ def main(argv=None):
                                                       "expected_pid", "expected_build_sha256",
                                                       "identity_sources", "directions")})
             return 0
+        # Retained evidence is never overwritten (`demo` already writes this file).
+        require(not args.write or not os.path.lexists(directory / "verification.json"),
+                "verification.json already exists and is never overwritten; "
+                "run verify without --write to re-check the trial")
         build = args.expected_build_sha256
         if build is None and args.c_binary is not None:
             build = _file_sha256(args.c_binary)

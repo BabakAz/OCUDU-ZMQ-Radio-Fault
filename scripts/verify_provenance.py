@@ -41,17 +41,23 @@ def compiler_banner(compiler):
         return None
 
 
-
-
 def build_reference(lock, directory):
+    """Return (binary or None, compiler banner, build error or None)."""
     toolchain = lock["toolchain"]
     banner = compiler_banner(toolchain["cc_default"])
     if banner is None or f"clang version {toolchain['compiler_version']}" not in banner:
-        return None, banner
+        return None, banner, None
     output = Path(directory) / "zmq_channel_broker"
-    subprocess.run([toolchain["cc_default"], *toolchain["cflags"], str(ROOT / "scripts/zmq_channel_broker.c"),
-                    "-o", str(output), *toolchain["ldlibs"]], check=True, capture_output=True, timeout=120)
-    return output, banner
+    try:
+        subprocess.run([toolchain["cc_default"], *toolchain["cflags"], str(ROOT / "scripts/zmq_channel_broker.c"),
+                        "-o", str(output), *toolchain["ldlibs"]], check=True, capture_output=True, text=True,
+                       timeout=120)
+    except subprocess.CalledProcessError as exc:
+        # Keep the compiler's own diagnosis (typically a missing zmq.h) instead of a traceback.
+        return None, banner, (exc.stderr or exc.stdout or "").strip()[-2000:] or f"exit status {exc.returncode}"
+    except subprocess.TimeoutExpired:
+        return None, banner, "the reference build timed out after 120 s"
+    return output, banner, None
 
 
 def main(argv=None):
@@ -76,7 +82,10 @@ def main(argv=None):
     if composite != recorded:
         report["failures"].append("Python broker build identity differs from the recorded value")
     recorded = manifest["recorded_build_identities"]["c_broker_binary_sha256"]["value"]
-    if args.c_binary is not None:
+    if args.c_binary is not None and not args.c_binary.is_file():
+        report["c_broker_build"] = {"binary": str(args.c_binary), "status": "missing", "recorded_sha256": recorded}
+        report["failures"].append(f"the supplied C broker binary does not exist: {args.c_binary}")
+    elif args.c_binary is not None:
         actual = sha256(args.c_binary)
         report["c_broker_build"] = {"binary": str(args.c_binary), "sha256": actual, "recorded_sha256": recorded,
                                     "status": "match" if actual == recorded else "differs"}
@@ -85,8 +94,13 @@ def main(argv=None):
     else:
         temporary = tempfile.mkdtemp(prefix="rf-provenance-")
         try:
-            binary, banner = build_reference(lock, temporary)
-            if binary is None:
+            binary, banner, error = build_reference(lock, temporary)
+            if error is not None:
+                report["c_broker_build"] = {"status": "build_failed", "reference_compiler": banner,
+                                            "compiler_output": error, "recorded_sha256": recorded}
+                report["failures"].append("the reference compiler could not build the C broker; "
+                                          "are the libzmq development headers (libzmq3-dev) installed?")
+            elif binary is None:
                 # Another compiler builds a working broker, but not the recorded bytes.
                 report["c_broker_build"] = {"status": "not_checked_reference_compiler_unavailable",
                                             "reference_compiler": banner, "recorded_sha256": recorded}

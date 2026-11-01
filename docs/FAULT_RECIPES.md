@@ -121,7 +121,7 @@ accounting records during a clean SIGTERM shutdown, so stop it that way.
 | `broker_events.jsonl` | broker | Truth: arm, each condition applied/restored, forwarded progress, finals |
 | `control.jsonl`, `execution.json` | arm | Every control receipt with monotonic brackets; the arm outcome |
 | `stop.json` | stop | Signals sent and outcome |
-| `verification.json` | verify `--write` | The reconciliation result |
+| `verification.json` | verify `--write`, demo | The reconciliation result; never overwritten |
 
 Archive the directory without `control.token` and `rb.sock` if you share it.
 

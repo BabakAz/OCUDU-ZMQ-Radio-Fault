@@ -62,6 +62,35 @@ def test_complete_broker_only_trial_qualifies_and_matches_the_iq_oracle(c_binary
         assert all(token not in (trial / name).read_bytes() for name in names - {"control.token", "rb.sock"})
 
 
+def test_failed_demo_stops_its_broker_and_tears_down_promptly(c_binary, monkeypatch):
+    raised = {}
+
+    def failing_run_schedule(*_args, **_kwargs):
+        time.sleep(0.2)  # both synthetic sinks now have a request in flight
+        raised["at"] = time.monotonic()
+        raise fault.FaultError("simulated arm failure")
+
+    monkeypatch.setattr(fault, "run_schedule", failing_run_schedule)
+    with tempfile.TemporaryDirectory(prefix="rf-fail-", dir="/tmp") as name:
+        with pytest.raises(fault.FaultError, match="simulated arm failure"):
+            process.demo("normal", c_binary=c_binary, output=Path(name) / "demo", log=lambda _message: None)
+        # The sinks must not wait for replies from the broker that was just stopped.
+        assert time.monotonic() - raised["at"] < 5
+        launch = json.loads((Path(name) / "demo" / "trial" / "launch.json").read_text())
+        assert process.process_identity(launch["pid"])[0] is None
+
+
+def test_demo_rejects_unusable_arguments_before_creating_anything(tmp_path):
+    output, missing = tmp_path / "demo", tmp_path / "missing-broker"
+    for recipe, arguments, reason in (("grc_normal", {"frame_samples": 0}, "frame size"),
+                                      ("B1", {}, "needs --c-binary"),
+                                      ("B1", {"c_binary": missing}, "binary not found"),
+                                      ("grc_normal", {"c_binary": missing}, "only to the C backend")):
+        with pytest.raises(fault.FaultError, match=reason):
+            process.demo(recipe, output=output, log=lambda _message: None, **arguments)
+    assert not output.exists()
+
+
 def test_stop_refuses_to_signal_a_process_whose_identity_differs(tmp_path):
     directory = tmp_path / "trial"
     directory.mkdir(mode=0o700)

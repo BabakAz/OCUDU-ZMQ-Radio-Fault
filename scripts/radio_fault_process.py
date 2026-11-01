@@ -78,17 +78,29 @@ def python_identity():
             "version": sys.version.split()[0]}
 
 
+def require_backend_binary(backend, c_binary):
+    """The C backend runs a compiled broker; the Python backend runs this interpreter."""
+    if backend == "c":
+        require(c_binary is not None, "the C backend needs --c-binary (build it with `make`)")
+        require(Path(c_binary).is_file(), f"C broker binary not found: {c_binary} (build it with `make`)")
+    else:
+        require(c_binary is None, "--c-binary applies only to the C backend")
+
+
+def require_frame_samples(frame_samples):
+    require(type(frame_samples) is int and 1 <= frame_samples <= 1 << 20, "frame size must be 1..1048576 samples")
+
+
 def broker_command(preparation, *, c_binary=None, endpoints=None):
     """Exact argv for the prepared broker and its expected build identity."""
     backend = preparation["backend"]
+    require_backend_binary(backend, c_binary)
     argv = list(preparation["argv"])
     if backend == "c":
-        require(c_binary is not None, "the C backend needs --c-binary (build it with `make`)")
         binary = Path(c_binary).resolve(strict=True)
         command = [str(binary), *argv]
         build = fault.digest(fault.read_bytes(binary, 256 * 1024 ** 2))
     else:
-        require(c_binary is None, "--c-binary applies only to the C backend")
         command = [sys.executable, "-u", str(fault.ROOT / "scripts" / "ocudu_channel_broker.py"), *argv, "--no-gui"]
         build = fault.expected_grc_source_identity()["build_sha256"]
     if endpoints is not None:
@@ -305,7 +317,7 @@ class SyntheticRadio:
                  models=None):
         import numpy as np
         import zmq
-        require(type(frame_samples) is int and 1 <= frame_samples <= 1 << 20, "frame size must be 1..1048576 samples")
+        require_frame_samples(frame_samples)
         rng = np.random.Generator(np.random.PCG64(seed))
         phases = rng.uniform(0.0, 2 * math.pi, (frame_count, frame_samples))
         self.frames = (math.sqrt(power) * np.exp(1j * phases)).astype(np.complex64)
@@ -352,9 +364,11 @@ class SyntheticRadio:
                 while not self.sinks_stop.is_set():
                     sock.send(b"\x01")
                     # Complete the exchange even after a stop request so the
-                    # broker is never left with an unanswered request.
+                    # broker is never left with an unanswered request. Stop
+                    # waiting on an error or once the sources are being torn
+                    # down: the broker is then gone and will never reply.
                     while not sock.poll(100):
-                        if self.errors:
+                        if self.errors or self.sources_stop.is_set():
                             return
                     parts = sock.recv_multipart()
                     require(len(parts) == 1, "broker reply was not a single frame")
@@ -495,6 +509,9 @@ def demo(recipe, *, seed=41, c_binary=None, output=None, frame_samples=23040, wa
          log=lambda message: print(message, file=sys.stderr, flush=True)):
     """Prepare, launch, drive, arm, stop and verify one recipe with synthetic peers only."""
     spec = fault.recipe_specification(recipe, seed)
+    # Reject unusable arguments before a trial (with its token) is created under /tmp.
+    require_backend_binary(spec["backend"], c_binary)
+    require_frame_samples(frame_samples)
     started = time.monotonic()
     base = _private_empty_directory(output) if output is not None else Path(tempfile.mkdtemp(prefix="rf-demo-", dir="/tmp"))
     trial = base / "trial"

@@ -19,7 +19,7 @@ Operational notes:
 - Run the brokers as an ordinary user; they need no privileges.
 - Do not expose the ZMQ ports beyond loopback: the ZMQ radio protocol has no
   authentication.
-- A trial directory holds its control token until the run ends. Remove
-  `control.token` before sharing or archiving a trial.
+- A trial directory keeps its control token after the run; nothing deletes
+  it. Remove `control.token` before sharing or archiving a trial.
 - The example srsUE configuration contains public srsRAN test credentials.
   Never reuse them for a real subscriber or network.

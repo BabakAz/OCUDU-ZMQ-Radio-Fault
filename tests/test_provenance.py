@@ -49,16 +49,48 @@ def test_a_modified_paper_file_is_reported(tmp_path):
     assert "the supplied C broker binary differs from the recorded paper build" in report["failures"]
 
 
+def test_build_failures_and_missing_binaries_are_reported_not_raised(tmp_path):
+    for name in ("scripts", "config", "provenance", "dependencies"):
+        shutil.copytree(ROOT / name, tmp_path / name, ignore=shutil.ignore_patterns("__pycache__"))
+    (tmp_path / "scripts/zmq_channel_broker.c").write_text("#error deliberately broken source\n")
+    code, report = run(tmp_path)
+    assert code == 1 and report["status"] == "failed"
+    build = report["c_broker_build"]
+    if build["status"] != "not_checked_reference_compiler_unavailable":
+        assert build["status"] == "build_failed" and "deliberately broken source" in build["compiler_output"]
+    code, report = run(tmp_path, "--c-binary", str(tmp_path / "missing-broker"))
+    assert code == 1 and report["c_broker_build"]["status"] == "missing"
+
+
 LINK = re.compile(r"\]\(([^)\s]+)\)")
 
 
-def test_relative_documentation_links_resolve():
+def github_anchors(document):
+    """Heading anchors as GitHub renders them (lowercase, punctuation dropped, spaces to hyphens)."""
+    anchors, seen, fenced = set(), {}, False
+    for line in document.read_text(encoding="utf-8").splitlines():
+        fenced ^= line.startswith("```")
+        heading = None if fenced else re.match(r"#{1,6}\s+(.+?)\s*$", line)
+        if heading:
+            slug = "".join(char for char in heading.group(1).lower().replace(" ", "-")
+                           if char.isalnum() or char in "-_")
+            anchors.add(f"{slug}-{seen[slug]}" if slug in seen else slug)
+            seen[slug] = seen.get(slug, 0) + 1
+    return anchors
+
+
+def test_relative_documentation_links_and_anchors_resolve():
     broken = []
-    for document in [*ROOT.glob("*.md"), *ROOT.glob("docs/*.md"), *ROOT.glob("config/*.md")]:
-        for target in LINK.findall(document.read_text(encoding="utf-8")):
-            if re.match(r"[a-z]+:", target) or target.startswith("#"):
+    documents = [path for path in ROOT.rglob("*.md")
+                 if not {".git", ".venv", "artifacts", "build"} & set(path.relative_to(ROOT).parts)]
+    assert len(documents) > 10
+    for document in documents:
+        text = re.sub(r"```.*?```", "", document.read_text(encoding="utf-8"), flags=re.S)
+        for target in LINK.findall(text):
+            if re.match(r"[a-z]+:", target):
                 continue
-            path = (document.parent / target.split("#")[0]).resolve()
-            if not path.exists():
+            name, _, anchor = target.partition("#")
+            path = (document.parent / name).resolve() if name else document
+            if not path.exists() or (anchor and path.suffix == ".md" and anchor not in github_anchors(path)):
                 broken.append(f"{document.relative_to(ROOT)} -> {target}")
     assert not broken, broken

@@ -187,3 +187,14 @@ def test_cli_prepare_writes_a_private_control_directory_without_starting_anythin
                        for path in directory.iterdir())
         again = cli("prepare", "B1", str(directory))
         assert again.returncode == 1 and "FileExistsError" in again.stderr
+
+
+def test_cli_verify_write_refuses_an_existing_record_before_verifying():
+    with tempfile.TemporaryDirectory(prefix="rf-cli-", dir="/tmp") as name:
+        directory = Path(name) / "t"
+        assert cli("prepare", "B1", str(directory)).returncode == 0
+        fault.write_private(directory / "verification.json", b"{}\n")
+        result = cli("verify", str(directory), "--write")
+        # The refusal comes first: this unrun trial would otherwise fail verification.
+        assert result.returncode == 1 and "verification.json already exists" in result.stderr
+        assert (directory / "verification.json").read_bytes() == b"{}\n"
